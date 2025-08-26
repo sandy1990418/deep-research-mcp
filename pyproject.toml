@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deep-research-mcp"
+version = "0.1.0"
+description = "Deep Research MCP Server - Advanced web research and content analysis"
+authors = [
+    { name = "Deep Research", email = "research@example.com" }
+]
+dependencies = [
+    "fastmcp>=2.0.0",
+    "httpx>=0.25.0",
+    "beautifulsoup4>=4.12.0",
+    "python-dotenv>=1.0.0",
+    "markdownify>=0.11.6",
+    "lxml>=4.9.0",
+    "pydantic>=2.0.0",
+    "google-generativeai>=0.8.0",
+    "psutil>=6.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["deep_research*"]
+
+[tool.setuptools]
+py-modules = ["main", "research_engine", "content_analyzer", "report_generator", "examples"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+deep-research-mcp = "deep_research.main:main"
