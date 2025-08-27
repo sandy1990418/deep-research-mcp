@@ -26,7 +26,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("deep-research-mcp")
 
 # Initialize FastMCP server
-mcp = FastMCP("Deep Research 🔍", dependencies=["httpx", "beautifulsoup4", "markdownify"])
+mcp = FastMCP("Deep Research", dependencies=["httpx", "beautifulsoup4", "markdownify"])
 
 # Initialize components
 research_engine = ResearchEngine()
@@ -116,7 +116,7 @@ async def start_research(
     Returns a research session ID that can be used for report generation.
     """
     try:
-        ctx.info(f"🔍 Starting research on: {request.topic}", extra={
+        ctx.info(f"Starting research on: {request.topic}", extra={
             "topic": request.topic,
             "depth": request.depth, 
             "sources": request.sources,
@@ -147,7 +147,7 @@ async def start_research(
         research_sessions[session_id] = session_data
         
         # Start research process
-        ctx.info("🔍 Conducting multi-source research...", extra={
+        ctx.info("Conducting multi-source research...", extra={
             "session_id": session_id,
             "queries_generated": len(config.sources)
         })
@@ -161,7 +161,7 @@ async def start_research(
         key_sources_count = len(initial_results.get('key_sources', []))
         findings_count = len(initial_results.get('key_findings', []))
         
-        ctx.info("✅ Research completed successfully", extra={
+        ctx.info("Research completed successfully", extra={
             "session_id": session_id,
             "search_engines_used": search_results_count,
             "key_sources_found": key_sources_count,
@@ -169,7 +169,7 @@ async def start_research(
             "total_sources": initial_results.get('total_sources', 0)
         })
         
-        return f"""✅ Research session started successfully!
+        return f"""Research session started successfully!
 
 **Session Details:**
 - Session ID: `{session_id}`
@@ -198,7 +198,7 @@ Use `generate_report` with session ID `{session_id}` to create a comprehensive r
         if 'session_id' in locals() and session_id in research_sessions:
             research_sessions[session_id]["status"] = "error"
             research_sessions[session_id]["error"] = str(e)
-        return f"❌ Research failed: {str(e)}"
+        return f"Research failed: {str(e)}"
 
 @mcp.tool()
 async def analyze_content(
@@ -225,7 +225,7 @@ async def analyze_content(
         
         ctx.info("Content analysis completed")
         
-        return f"""📊 **Content Analysis Results**
+        return f"""**Content Analysis Results**
 
 **URL:** {request.url}
 **Analysis Type:** {request.analysis_type}
@@ -237,7 +237,7 @@ async def analyze_content(
         
     except Exception as e:
         ctx.error(f"Content analysis failed: {str(e)}")
-        return f"❌ Analysis failed: {str(e)}"
+        return f"Analysis failed: {str(e)}"
 
 @mcp.tool()
 async def search_sources(
@@ -267,7 +267,7 @@ async def search_sources(
         ctx.info(f"Found {total_results} total results across {len(request.sources)} sources")
         
         # Format results
-        result_text = f"""🔍 **Search Results for:** "{request.query}"
+        result_text = f"""**Search Results for:** "{request.query}"
 
 **Sources searched:** {', '.join(request.sources)}
 **Total results:** {total_results}
@@ -275,7 +275,7 @@ async def search_sources(
 """
         
         for source, results in search_results.items():
-            result_text += f"\n## 🔸 {source.upper()} Results ({len(results)} found)\n\n"
+            result_text += f"\n## {source.upper()} Results ({len(results)} found)\n\n"
             
             for i, result in enumerate(results[:5], 1):  # Show top 5 from each source
                 title = result.get('title', 'No title')
@@ -292,7 +292,7 @@ async def search_sources(
         
     except Exception as e:
         ctx.error(f"Search failed: {str(e)}")
-        return f"❌ Search failed: {str(e)}"
+        return f"Search failed: {str(e)}"
 
 @mcp.tool()
 async def generate_report(
@@ -313,7 +313,7 @@ async def generate_report(
     """
     try:
         if request.session_id not in research_sessions:
-            return f"❌ Session `{request.session_id}` not found. Available sessions: {list(research_sessions.keys())}"
+            return f"Session `{request.session_id}` not found. Available sessions: {list(research_sessions.keys())}"
         
         session_data = research_sessions[request.session_id]
         
@@ -331,7 +331,7 @@ async def generate_report(
         
         ctx.info("Report generation completed")
         
-        return f"""📋 **Research Report Generated**
+        return f"""**Research Report Generated**
 
 **Session:** {request.session_id}
 **Topic:** {session_data.get('topic', 'Unknown')}
@@ -345,7 +345,7 @@ async def generate_report(
         
     except Exception as e:
         ctx.error(f"Report generation failed: {str(e)}")
-        return f"❌ Report generation failed: {str(e)}"
+        return f"Report generation failed: {str(e)}"
 
 @mcp.tool()
 async def fact_check(
@@ -391,14 +391,14 @@ async def fact_check(
             for ev in contradicting[:3]  # Top 3 contradicting
         ]) if contradicting else "No contradicting evidence found"
         
-        return f"""✅ **Fact-Check Results**
+        return f"""**Fact-Check Results**
 
 **Statement:** "{request.statement}"
 **Context:** {request.context if request.context else "None provided"}
 
 ---
 
-**📊 Verification Summary:**
+**Verification Summary:**
 • **Status:** {status}
 • **Confidence Level:** {confidence}
 • **Sources Checked:** {sources_count}
@@ -407,22 +407,22 @@ async def fact_check(
 
 ---
 
-**✅ Supporting Evidence:**
+**Supporting Evidence:**
 {supporting_text}
 
-**❌ Contradicting Evidence:**
+**Contradicting Evidence:**
 {contradicting_text}
 
 ---
 
-**📝 Assessment:**
+**Assessment:**
 Based on analysis of {sources_count} sources, this statement appears to be **{status}** with **{confidence}** confidence. 
 {"Consider the contradicting evidence when making decisions." if contradicting else "The available evidence generally supports this statement."}
 """
         
     except Exception as e:
         ctx.error(f"Fact-check failed: {str(e)}")
-        return f"❌ Fact-check failed: {str(e)}"
+        return f"Fact-check failed: {str(e)}"
 
 # Prompts for research guidance
 @mcp.prompt("research-help")
@@ -432,7 +432,7 @@ def research_help_prompt() -> str:
 
 ## Available Tools:
 
-### 🔍 start_research
+### start_research
 Start comprehensive research on any topic
 - **Basic**: Quick overview (3-5 queries)
 - **Intermediate**: Balanced analysis (5-8 queries) 
@@ -441,7 +441,7 @@ Start comprehensive research on any topic
 
 Example: Research AI ethics with intermediate depth
 
-### 📊 analyze_content
+### analyze_content
 Analyze specific web pages for:
 - **summary**: Complete content overview
 - **key_points**: Important takeaways
@@ -449,19 +449,19 @@ Analyze specific web pages for:
 - **quotes**: Notable statements
 - **statistics**: Numerical insights
 
-### 🌐 search_sources
+### search_sources
 Multi-source search across Google, Bing, DuckDuckGo
 - Automatic relevance ranking
 - Duplicate detection
 - Configurable result limits
 
-### 📋 generate_report
+### generate_report
 Create professional research reports:
 - **Formats**: Markdown, HTML, JSON
 - **Sections**: Executive summary, findings, sources, methodology, conclusions
 - Professional citations and bibliography
 
-### ✅ fact_check
+### fact_check
 Verify claims against multiple sources:
 - Multi-source verification
 - Confidence assessment

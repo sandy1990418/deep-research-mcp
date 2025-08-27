@@ -8,7 +8,7 @@ import json
 
 def demo_fastmcp_tools():
     """Demonstrate FastMCP tool definitions and usage"""
-    print("🔍 Deep Research MCP Server with FastMCP")
+    print("Deep Research MCP Server with FastMCP")
     print("=" * 60)
     
     tools_examples = {
